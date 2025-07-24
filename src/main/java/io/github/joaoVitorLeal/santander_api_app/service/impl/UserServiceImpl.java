@@ -7,6 +7,8 @@ import io.github.joaoVitorLeal.santander_api_app.domain.model.Account;
 import io.github.joaoVitorLeal.santander_api_app.domain.model.User;
 import io.github.joaoVitorLeal.santander_api_app.domain.repository.UserRepository;
 import io.github.joaoVitorLeal.santander_api_app.domain.validator.UserValidator;
+import io.github.joaoVitorLeal.santander_api_app.dtos.FeatureDTO;
+import io.github.joaoVitorLeal.santander_api_app.dtos.NewsDTO;
 import io.github.joaoVitorLeal.santander_api_app.dtos.UserRequestDTO;
 import io.github.joaoVitorLeal.santander_api_app.dtos.UserResponseDTO;
 import io.github.joaoVitorLeal.santander_api_app.service.UserService;
@@ -49,25 +51,40 @@ public class UserServiceImpl implements UserService {
         if (repository.existsByAccountNumber(userToCreate.account().number())) {
             throw new IllegalArgumentException("This Account number already exists.");
         }
-        repository.save(userToCreate.toEntity(userToCreate));
+
+        User user = userToCreate.toEntity();
+        validator.validate(user);
+        repository.save(user);
     }
 
+    @Deprecated
     @Override
     public User createAndReturnUserEntity(UserRequestDTO userToCreate) {
         if (repository.existsByAccountNumber(userToCreate.account().number())) {
             throw new AccountNumberAlreadyExistsException("accountNumber", "The Account number '" + userToCreate.account().number() + "' already exists.");
         }
-        return repository.save(userToCreate.toEntity(userToCreate));
+        return repository.save(userToCreate.toEntityLegacy(userToCreate));
     }
 
     @Override
     public void update(Long id, UserRequestDTO userToUpdate) {
         User existingUser = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("To update, the user must already be registered in the database."));
-
+        // TODO: REFACTOR FOR THE MAPPER
         existingUser.setName(userToUpdate.name());
         existingUser.setCpf(userToUpdate.cpf());
         existingUser.setAccount(userToUpdate.account().toEntity());
+        existingUser.setCard(userToUpdate.card().toEntity());
+        existingUser.setFeatures(userToUpdate.features()
+                .stream()
+                .map(FeatureDTO::toEntity)
+                .toList()
+        );
+        existingUser.setNews(userToUpdate.news()
+                .stream()
+                .map(NewsDTO::toEntity)
+                .toList()
+        );
 
         validator.validate(existingUser);
         repository.save(existingUser);

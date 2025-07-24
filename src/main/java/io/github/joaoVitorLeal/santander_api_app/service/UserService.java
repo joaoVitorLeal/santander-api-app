@@ -9,9 +9,15 @@ import java.util.List;
 public interface UserService {
 
     UserResponseDTO findById(Long id);
+
     List<UserResponseDTO> findAll();
+
     void create(UserRequestDTO userDto);
+
+    @Deprecated
     User createAndReturnUserEntity(UserRequestDTO userDto);
+
     void update(Long id, UserRequestDTO userDto);
+
     void delete(Long id);
 }
