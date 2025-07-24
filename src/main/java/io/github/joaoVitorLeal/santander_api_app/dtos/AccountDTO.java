@@ -25,9 +25,17 @@ public record AccountDTO(
         this(entity.getNumber(), entity.getAgency(), entity.getBalance(), entity.getLimit());
     }
 
-
+    public Account toEntity() {
+        Account account = new Account();
+        account.setNumber(this.number);
+        account.setAgency(this.agency);
+        account.setBalance(this.balance);
+        account.setLimit(this.limit);
+        return account;
+    }
 
     // ----------------- LEGADO ----------------- //
+    @Deprecated
     public Account toEntityLegacy(AccountDTO dto) {
         Account account = new Account();
         account.setNumber(dto.number);

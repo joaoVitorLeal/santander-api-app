@@ -52,28 +52,29 @@ public record UserRequestDTO(
         }
 
         public User toEntity() {
-                User u = new User();
-                u.setName(name);
-                u.setCpf(cpf);
-                u.setAccount(account.toEntity());
-                u.setCard(card.toEntity());
-                u.setFeatures(features.stream().map(FeatureDTO::toEntity).toList());
-                u.setNews(news.stream().map(NewsDTO::toEntity).toList());
-                return u;
+                User user = new User();
+                user.setName(name);
+                user.setCpf(cpf);
+                user.setAccount(account.toEntity());
+                user.setCard(card.toEntity());
+                user.setFeatures(features.stream().map(FeatureDTO::toEntity).toList());
+                user.setNews(news.stream().map(NewsDTO::toEntity).toList());
+                return user;
         }
 
         // ----------------- LEGADO ----------------- //
+        @Deprecated
         public User toEntityLegacy(UserRequestDTO dto) {
                 User entity = new User();
                 entity.setName(dto.name);
                 entity.setCpf(dto.cpf);
 
                 entity.setAccount(ofNullable(dto.account)
-                        .map(accountDto -> accountDto.toEntity(dto.account)) /// LEGADO
+                        .map(accountDto -> accountDto.toEntityLegacy(dto.account)) /// LEGADO
                         .orElseThrow(IllegalArgumentException::new));
 
                 entity.setCard(ofNullable(dto.card)
-                        .map(cardDto -> cardDto.toEntity(dto.card)) /// LEGADO
+                        .map(cardDto -> cardDto.toEntityLegacy(dto.card)) /// LEGADO
                         .orElseThrow(IllegalArgumentException::new));
 
                 entity.setFeatures(ofNullable(dto.features)
