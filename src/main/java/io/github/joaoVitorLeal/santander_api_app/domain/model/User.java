@@ -85,7 +85,7 @@ public class User implements Serializable {
         this.features = features;
     }
 
-    public List<News> news() {
+    public List<News> getNews() {
         return this.news;
     }
 
