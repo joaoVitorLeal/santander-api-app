@@ -1,4 +1,4 @@
-package io.github.joaoVitorLeal.santander_api_app.exception.dtos;
+package io.github.joaoVitorLeal.santander_api_app.exception.global.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
