@@ -4,8 +4,8 @@ import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.AccountNumber
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.CpfAlreadyRegisteredException;
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.InvalidFieldsUserException;
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.UserNotFoundException;
-import io.github.joaoVitorLeal.santander_api_app.exception.dtos.ErrorResponseDTO;
-import io.github.joaoVitorLeal.santander_api_app.exception.dtos.ValidationErrorDTO;
+import io.github.joaoVitorLeal.santander_api_app.exception.global.dtos.ErrorResponseDTO;
+import io.github.joaoVitorLeal.santander_api_app.exception.global.dtos.ValidationErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,15 +92,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponseDTO> handleUntreatedExceptions(
-            final MethodArgumentNotValidException ex,
+            final RuntimeException ex,
             final HttpServletRequest request
     ) {
         logger.error("Internal server error at: [{}]: {}", request.getRequestURI(), ex.toString(), ex);
-
-        List<ValidationErrorDTO> validationErrors = ex.getFieldErrors()
-                .stream()
-                .map(error -> new ValidationErrorDTO(error.getField(), error.getDefaultMessage()))
-                .toList();
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
