@@ -1,0 +1,26 @@
+{
+  "name": "John Doe",
+  "cpf": "111111111",
+  "account": {
+    "number": "1234-02",
+    "agency": "64311-8",
+    "balance": 800.00,
+    "limit": 5000.00
+  },
+  "card": {
+    "number": "4409872175490817",
+    "limit": 2500.50
+  },
+  "features": [
+    {
+      "icon": "URL: https://feature.icon.com/png",
+      "description": "Feature description"
+    }
+  ],
+  "news": [
+    {
+      "icon": "URL: https://news.icon.com/png",
+      "description": "News description"
+    }
+  ]
+}
