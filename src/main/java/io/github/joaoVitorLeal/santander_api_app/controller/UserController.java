@@ -1,6 +1,6 @@
 package io.github.joaoVitorLeal.santander_api_app.controller;
 
-import io.github.joaoVitorLeal.santander_api_app.domain.model.User;
+import io.github.joaoVitorLeal.santander_api_app.controller.util.LocationUriBuilder;
 import io.github.joaoVitorLeal.santander_api_app.dtos.UserRequestDTO;
 import io.github.joaoVitorLeal.santander_api_app.dtos.UserResponseDTO;
 import io.github.joaoVitorLeal.santander_api_app.service.UserService;
@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -31,12 +30,9 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody UserRequestDTO userToCreate) {
-        User userCreated = service.create(userToCreate);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(userCreated.getId())
-                .toUri();
+        UserResponseDTO userCreated = service.create(userToCreate);
+
+        URI location = LocationUriBuilder.build(userCreated.id());
 
         return ResponseEntity.created(location).build();
     }
