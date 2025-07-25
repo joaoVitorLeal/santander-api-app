@@ -51,14 +51,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(UserRequestDTO userToCreate) {
+    public UserResponseDTO create(UserRequestDTO userToCreate) {
         if (repository.existsByAccountNumber(userToCreate.account().number())) {
             throw new AccountNumberAlreadyExistsException("This Account number already exists.");
         }
 
         User user = mapper.toEntity(userToCreate);
         validator.validate(user);
-        return repository.save(user);
+        return mapper.toDTO(repository.save(user));
     }
 
     @Transactional
