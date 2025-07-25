@@ -4,6 +4,7 @@ import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.AccountNumber
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.CpfAlreadyRegisteredException;
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.UserNotFoundException;
 import io.github.joaoVitorLeal.santander_api_app.domain.model.Account;
+import io.github.joaoVitorLeal.santander_api_app.domain.model.Card;
 import io.github.joaoVitorLeal.santander_api_app.domain.model.User;
 import io.github.joaoVitorLeal.santander_api_app.domain.repository.UserRepository;
 import io.github.joaoVitorLeal.santander_api_app.domain.validator.UserValidator;
@@ -13,9 +14,9 @@ import io.github.joaoVitorLeal.santander_api_app.dtos.UserRequestDTO;
 import io.github.joaoVitorLeal.santander_api_app.dtos.UserResponseDTO;
 import io.github.joaoVitorLeal.santander_api_app.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -43,53 +44,72 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Transactional
     @Override
-    public void create(UserRequestDTO userToCreate) {
+    public User create(UserRequestDTO userToCreate) {
         if (repository.existsByCpf(userToCreate.cpf())) {
             throw new CpfAlreadyRegisteredException(userToCreate.cpf());
         }
         if (repository.existsByAccountNumber(userToCreate.account().number())) {
-            throw new IllegalArgumentException("This Account number already exists.");
+            throw new AccountNumberAlreadyExistsException("This Account number already exists.");
         }
 
         User user = userToCreate.toEntity();
         validator.validate(user);
-        repository.save(user);
+        return repository.save(user);
     }
 
     @Deprecated
+    @Transactional
     @Override
-    public User createAndReturnUserEntity(UserRequestDTO userToCreate) {
+    public User createLegacy(UserRequestDTO userToCreate) {
         if (repository.existsByAccountNumber(userToCreate.account().number())) {
             throw new AccountNumberAlreadyExistsException("accountNumber", "The Account number '" + userToCreate.account().number() + "' already exists.");
         }
         return repository.save(userToCreate.toEntityLegacy(userToCreate));
     }
 
+    @Transactional
     @Override
     public void update(Long id, UserRequestDTO userToUpdate) {
         User existingUser = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("To update, the user must already be registered in the database."));
-        // TODO: REFACTOR FOR THE MAPPER
+
         existingUser.setName(userToUpdate.name());
         existingUser.setCpf(userToUpdate.cpf());
-        existingUser.setAccount(userToUpdate.account().toEntity());
-        existingUser.setCard(userToUpdate.card().toEntity());
+
+        // Atualiza os campos da Account existente
+        Account existingAccount = existingUser.getAccount();
+        Account incomingAccount = userToUpdate.account().toEntity();
+
+        existingAccount.setNumber(incomingAccount.getNumber());
+        existingAccount.setAgency(incomingAccount.getAgency());
+        existingAccount.setBalance(incomingAccount.getBalance());
+        existingAccount.setLimit(incomingAccount.getLimit());
+
+        // Atualiza os campos da Card existente — SEM substituir a entidade
+        Card existingCard = existingUser.getCard();
+        Card incomingCard = userToUpdate.card().toEntity();
+
+        existingCard.setNumber(incomingCard.getNumber());
+        existingCard.setLimit(incomingCard.getLimit());
+
+        // Atualiza features e news normalmente (substitui listas)
         existingUser.setFeatures(userToUpdate.features()
                 .stream()
                 .map(FeatureDTO::toEntity)
-                .toList()
-        );
+                .toList());
+
         existingUser.setNews(userToUpdate.news()
                 .stream()
                 .map(NewsDTO::toEntity)
-                .toList()
-        );
+                .toList());
 
         validator.validate(existingUser);
         repository.save(existingUser);
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         repository.findById(id)
@@ -101,40 +121,3 @@ public class UserServiceImpl implements UserService {
                 );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

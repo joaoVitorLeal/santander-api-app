@@ -12,10 +12,10 @@ public interface UserService {
 
     List<UserResponseDTO> findAll();
 
-    void create(UserRequestDTO userDto);
+    User create(UserRequestDTO userDto);
 
     @Deprecated
-    User createAndReturnUserEntity(UserRequestDTO userDto);
+    User createLegacy(UserRequestDTO userDto);
 
     void update(Long id, UserRequestDTO userDto);
 
