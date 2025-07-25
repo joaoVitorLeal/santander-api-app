@@ -1,7 +1,6 @@
 package io.github.joaoVitorLeal.santander_api_app.service.impl;
 
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.AccountNumberAlreadyExistsException;
-import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.CpfAlreadyRegisteredException;
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.UserNotFoundException;
 import io.github.joaoVitorLeal.santander_api_app.domain.model.Account;
 import io.github.joaoVitorLeal.santander_api_app.domain.model.Card;
@@ -12,23 +11,28 @@ import io.github.joaoVitorLeal.santander_api_app.dtos.FeatureDTO;
 import io.github.joaoVitorLeal.santander_api_app.dtos.NewsDTO;
 import io.github.joaoVitorLeal.santander_api_app.dtos.UserRequestDTO;
 import io.github.joaoVitorLeal.santander_api_app.dtos.UserResponseDTO;
+import io.github.joaoVitorLeal.santander_api_app.mappers.UserMapper;
 import io.github.joaoVitorLeal.santander_api_app.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final UserValidator validator;
+    private final UserMapper mapper;
 
-    public UserServiceImpl(UserRepository repository, UserValidator validator) {
+    public UserServiceImpl(UserRepository repository, UserValidator validator, UserMapper mapper) {
         this.repository = repository;
         this.validator = validator;
+        this.mapper = mapper;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserResponseDTO findById(Long id) {
         return repository.findById(id)
@@ -36,6 +40,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("Not found user with ID: " + id));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<UserResponseDTO> findAll() {
         return repository.findAll()
@@ -47,26 +52,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User create(UserRequestDTO userToCreate) {
-        if (repository.existsByCpf(userToCreate.cpf())) {
-            throw new CpfAlreadyRegisteredException(userToCreate.cpf());
-        }
         if (repository.existsByAccountNumber(userToCreate.account().number())) {
             throw new AccountNumberAlreadyExistsException("This Account number already exists.");
         }
 
-        User user = userToCreate.toEntity();
+        User user = mapper.toEntity(userToCreate);
         validator.validate(user);
         return repository.save(user);
-    }
-
-    @Deprecated
-    @Transactional
-    @Override
-    public User createLegacy(UserRequestDTO userToCreate) {
-        if (repository.existsByAccountNumber(userToCreate.account().number())) {
-            throw new AccountNumberAlreadyExistsException("accountNumber", "The Account number '" + userToCreate.account().number() + "' already exists.");
-        }
-        return repository.save(userToCreate.toEntityLegacy(userToCreate));
     }
 
     @Transactional
@@ -98,12 +90,12 @@ public class UserServiceImpl implements UserService {
         existingUser.setFeatures(userToUpdate.features()
                 .stream()
                 .map(FeatureDTO::toEntity)
-                .toList());
+                .collect(Collectors.toList()));
 
         existingUser.setNews(userToUpdate.news()
                 .stream()
                 .map(NewsDTO::toEntity)
-                .toList());
+                .collect(Collectors.toList()));
 
         validator.validate(existingUser);
         repository.save(existingUser);
