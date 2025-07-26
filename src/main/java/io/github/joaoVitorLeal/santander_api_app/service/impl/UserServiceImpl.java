@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true)
-    @Override
     public UserResponseDTO findById(Long id) {
         return repository.findById(id)
                 .map(UserResponseDTO::new)
@@ -41,7 +40,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true)
-    @Override
     public List<UserResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
@@ -50,7 +48,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    @Override
     public UserResponseDTO create(UserRequestDTO userToCreate) {
         if (repository.existsByAccountNumber(userToCreate.account().number())) {
             throw new AccountNumberAlreadyExistsException("This Account number already exists.");
@@ -62,7 +59,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    @Override
     public void update(Long id, UserRequestDTO userToUpdate) {
         User existingUser = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("To update, the user must already be registered in the database."));
@@ -102,7 +98,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    @Override
     public void delete(Long id) {
         repository.findById(id)
                 .ifPresentOrElse(
