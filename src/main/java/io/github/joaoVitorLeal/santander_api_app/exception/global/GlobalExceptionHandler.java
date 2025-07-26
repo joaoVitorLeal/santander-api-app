@@ -1,9 +1,6 @@
 package io.github.joaoVitorLeal.santander_api_app.exception.global;
 
-import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.AccountNumberAlreadyExistsException;
-import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.CpfAlreadyRegisteredException;
-import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.InvalidFieldsUserException;
-import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.UserNotFoundException;
+import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.*;
 import io.github.joaoVitorLeal.santander_api_app.exception.global.dtos.ErrorResponseDTO;
 import io.github.joaoVitorLeal.santander_api_app.exception.global.dtos.ValidationErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,6 +57,16 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(CpfAlreadyRegisteredException.class)
+    public ResponseEntity<ErrorResponseDTO> handleCpfAlreadyRegisteredException(
+            final CpfAlreadyRegisteredException ex,
+            final HttpServletRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ErrorResponseDTO.conflict(ex.getMessage(), request.getRequestURI()));
+    }
+
     @ExceptionHandler(AccountNumberAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDTO> handleAccountNumberAlreadyExistsException(
             final AccountNumberAlreadyExistsException ex,
@@ -70,9 +77,9 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponseDTO.conflict(ex.getMessage(), request.getRequestURI()));
     }
 
-    @ExceptionHandler(CpfAlreadyRegisteredException.class)
-    public ResponseEntity<ErrorResponseDTO> handleCpfAlreadyRegisteredException(
-            final CpfAlreadyRegisteredException ex,
+    @ExceptionHandler(CardNumberAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleCardNumberAlreadyExistsException(
+            final CardNumberAlreadyExistsException ex,
             final HttpServletRequest request
     ) {
         return ResponseEntity
