@@ -4,8 +4,8 @@ public class AccountNumberAlreadyExistsException extends RuntimeException{
 
     private final String field;
 
-    public AccountNumberAlreadyExistsException(String message) {
-        super(message);
+    public AccountNumberAlreadyExistsException(String accountNumber) {
+        super("Account number already registered: " + accountNumber);
         this.field = null;
     }
 
