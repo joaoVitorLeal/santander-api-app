@@ -20,12 +20,4 @@ public record FeatureDTO(
         entity.setDescription(this.description);
         return entity;
     }
-
-    @Deprecated
-    public Feature toEntity(FeatureDTO dto) {
-        Feature entity = new Feature();
-        entity.setIcon(dto.icon);
-        entity.setDescription(dto.description);
-        return entity;
-    }
 }

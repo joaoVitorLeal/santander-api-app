@@ -18,7 +18,7 @@ public record AccountDTO(
 
         @NotNull
         @PositiveOrZero
-        @DecimalMax(value = "99999999999.99", inclusive = true)
+        @DecimalMax(value = "99999999999.99")
         BigDecimal limit
 ) {
     public AccountDTO(Account entity) {
@@ -31,17 +31,6 @@ public record AccountDTO(
         account.setAgency(this.agency);
         account.setBalance(this.balance);
         account.setLimit(this.limit);
-        return account;
-    }
-
-    // ----------------- LEGADO ----------------- //
-    @Deprecated
-    public Account toEntityLegacy(AccountDTO dto) {
-        Account account = new Account();
-        account.setNumber(dto.number);
-        account.setAgency(dto.agency);
-        account.setBalance(dto.balance);
-        account.setLimit(dto.limit);
         return account;
     }
 }

@@ -25,13 +25,4 @@ public record CardDTO(
         entity.setLimit(this.limit);
         return entity;
     }
-
-    // ----------------- LEGADO ----------------- //
-    @Deprecated
-    public Card toEntityLegacy(CardDTO dto) {
-        Card entity = new Card();
-        entity.setNumber(dto.number);
-        entity.setLimit(dto.limit);
-        return entity;
-    }
 }
