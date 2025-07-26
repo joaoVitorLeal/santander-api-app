@@ -2,12 +2,12 @@ spring:
   application:
   name: santander-api-app
   profiles:
-    active: dev
+    active: prod
   output:
     ansi:
       enabled: ALWAYS
   datasource:
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5433/santander_app}
+    url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
     driverClassName: org.postgresql.Driver

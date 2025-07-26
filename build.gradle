@@ -33,6 +33,12 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+tasks.jar {
+	manifest {
+		attributes["Main-Class"] = "io.github.joaoVitorLeal.santander_api_app.Application"
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

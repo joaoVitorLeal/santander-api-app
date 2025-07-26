@@ -1,4 +1,9 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATA}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
   jpa:
+    show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
