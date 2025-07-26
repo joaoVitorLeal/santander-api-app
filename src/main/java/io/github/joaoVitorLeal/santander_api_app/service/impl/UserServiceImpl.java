@@ -48,10 +48,6 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public UserResponseDTO create(UserRequestDTO userToCreate) {
-        if (repository.existsByAccountNumber(userToCreate.account().number())) {
-            throw new AccountNumberAlreadyExistsException("This Account number already exists.");
-        }
-
         User user = mapper.toEntity(userToCreate);
         validator.validate(user);
         return mapper.toDTO(repository.save(user));
