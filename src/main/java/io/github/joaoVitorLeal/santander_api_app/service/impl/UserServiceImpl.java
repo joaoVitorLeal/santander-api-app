@@ -1,6 +1,5 @@
 package io.github.joaoVitorLeal.santander_api_app.service.impl;
 
-import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.AccountNumberAlreadyExistsException;
 import io.github.joaoVitorLeal.santander_api_app.domain.exceptions.UserNotFoundException;
 import io.github.joaoVitorLeal.santander_api_app.domain.model.Account;
 import io.github.joaoVitorLeal.santander_api_app.domain.model.Card;
@@ -63,37 +62,17 @@ public class UserServiceImpl implements UserService {
         User existingUser = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("To update, the user must already be registered in the database."));
 
-        existingUser.setName(userToUpdate.name());
-        existingUser.setCpf(userToUpdate.cpf());
+        // Conversão temporária para validação de dados
+        User userToValidate = mapper.toEntity(userToUpdate);
+        userToValidate.setId(existingUser.getId());
 
-        // Atualiza os campos da Account existente
-        Account existingAccount = existingUser.getAccount();
-        Account incomingAccount = userToUpdate.account().toEntity();
+        // Validar campos
+        validator.validate(userToValidate);
 
-        existingAccount.setNumber(incomingAccount.getNumber());
-        existingAccount.setAgency(incomingAccount.getAgency());
-        existingAccount.setBalance(incomingAccount.getBalance());
-        existingAccount.setLimit(incomingAccount.getLimit());
+        // Atualizar Campos
+        updateUserFields(existingUser, userToUpdate);
 
-        // Atualiza os campos da Card existente — SEM substituir a entidade
-        Card existingCard = existingUser.getCard();
-        Card incomingCard = userToUpdate.card().toEntity();
-
-        existingCard.setNumber(incomingCard.getNumber());
-        existingCard.setLimit(incomingCard.getLimit());
-
-        // Atualiza features e news normalmente (substitui listas)
-        existingUser.setFeatures(userToUpdate.features()
-                .stream()
-                .map(FeatureDTO::toEntity)
-                .collect(Collectors.toList()));
-
-        existingUser.setNews(userToUpdate.news()
-                .stream()
-                .map(NewsDTO::toEntity)
-                .collect(Collectors.toList()));
-
-        validator.validate(existingUser);
+        // Salvar
         repository.save(existingUser);
     }
 
@@ -106,5 +85,37 @@ public class UserServiceImpl implements UserService {
                             throw new UserNotFoundException("Not found user with ID: " + id);
                         }
                 );
+    }
+
+    private void updateUserFields(User existingUser, UserRequestDTO userToUpdate) {
+        existingUser.setName(userToUpdate.name());
+        existingUser.setCpf(userToUpdate.cpf());
+
+        // Atualiza os campos da Account sem substituir a entidade
+        Account existingAccount = existingUser.getAccount();
+        Account incomingAccount = userToUpdate.account().toEntity();
+
+        existingAccount.setNumber(incomingAccount.getNumber());
+        existingAccount.setAgency(incomingAccount.getAgency());
+        existingAccount.setBalance(incomingAccount.getBalance());
+        existingAccount.setLimit(incomingAccount.getLimit());
+
+        // Atualiza os campos da Card sem substituir a entidade
+        Card existingCard = existingUser.getCard();
+        Card incomingCard = userToUpdate.card().toEntity();
+
+        existingCard.setNumber(incomingCard.getNumber());
+        existingCard.setLimit(incomingCard.getLimit());
+
+        // Substitui completamente as coleções
+        existingUser.setFeatures(userToUpdate.features()
+                .stream()
+                .map(FeatureDTO::toEntity)
+                .collect(Collectors.toList()));
+
+        existingUser.setNews(userToUpdate.news()
+                .stream()
+                .map(NewsDTO::toEntity)
+                .collect(Collectors.toList()));
     }
 }
