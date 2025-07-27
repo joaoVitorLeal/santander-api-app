@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         servers = { @Server(url = "/", description = "Default server URL") }, // CORS definition for Swagger
         info = @Info(
-                title = "Santander Open Academy — GoF with Spring Boot — REST API Demonstration",
-                version = "1.1.0",
+                title = "Santander Open Academy — Santander-App REST API Demonstration",
+                version = "2.13.1",
                 description = """
-            This project demonstrates  developed as part of the DIO and Santander Open Academy initiative.
+            This educational project demonstrates developed as part of the DIO and Santander Open Academy initiative.
             Source code: https://github.com/joaoVitorLeal/santander-api-app
             """,
                 termsOfService = "https://opensource.org/licenses/MIT",
