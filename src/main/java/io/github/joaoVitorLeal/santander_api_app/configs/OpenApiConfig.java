@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
                 version = "1.1.0",
                 description = """
             This project demonstrates  developed as part of the DIO and Santander Open Academy initiative.
-            Source code: * Not yet available *
+            Source code: https://github.com/joaoVitorLeal/santander-api-app
             """,
                 termsOfService = "https://opensource.org/licenses/MIT",
                 license = @License(

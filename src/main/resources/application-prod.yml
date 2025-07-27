@@ -4,6 +4,6 @@ spring:
     username: ${PGUSER}
     password: ${PGPASSWORD}
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
