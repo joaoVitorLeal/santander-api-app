@@ -13,13 +13,13 @@
   },
   "features": [
     {
-      "icon": "URL: https://feature.icon.com/png",
+      "icon": "https://some.feature.icon.com/png",
       "description": "Feature description"
     }
   ],
   "news": [
     {
-      "icon": "URL: https://news.icon.com/png",
+      "icon": "https://some.news.icon.com/png",
       "description": "News description"
     }
   ]
