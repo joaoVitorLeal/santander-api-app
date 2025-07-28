@@ -97,12 +97,16 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponseDTO.notFound(ex.getMessage(), request.getRequestURI()));
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleUntreatedExceptions(
-            final RuntimeException ex,
+            final Exception ex,
             final HttpServletRequest request
     ) {
-        logger.error("Internal server error at: [{}]: {}", request.getRequestURI(), ex.toString(), ex);
+        logger.error("Internal server error at: [{}]: {} - {}",
+                request.getRequestURI(),
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                ex);
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
