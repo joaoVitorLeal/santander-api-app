@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
         servers = { @Server(url = "/", description = "Default server URL") }, // CORS definition for Swagger
         info = @Info(
                 title = "Santander Open Academy — Santander-App REST API Demonstration",
-                version = "2.13.1",
+                version = "2.14.0",
                 description = """
             This educational project demonstrates developed as part of the DIO and Santander Open Academy initiative.
             Source code: https://github.com/joaoVitorLeal/santander-api-app
