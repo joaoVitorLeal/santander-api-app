@@ -2,7 +2,7 @@ spring:
   application:
   name: santander-api-app
   profiles:
-    active: prod
+    active: dev
   output:
     ansi:
       enabled: ALWAYS
@@ -18,3 +18,5 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate.format_sql: true
+springdoc:
+  override-with-generic-response: false
