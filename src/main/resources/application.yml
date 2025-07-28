@@ -2,7 +2,7 @@ spring:
   application:
   name: santander-api-app
   profiles:
-    active: dev
+    active: prod
   output:
     ansi:
       enabled: ALWAYS
